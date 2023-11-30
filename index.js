@@ -27,6 +27,7 @@ async function run() {
     // await client.connect();
 
     const userCollection = client.db("raf-IT").collection("users");
+    const salaryCollection = client.db("raf-IT").collection("salary");
 
     app.post('/jwt', async (req, res) => {
         const user = req.body;
@@ -90,6 +91,30 @@ async function run() {
       }
         const result = await userCollection.insertOne(user);
         res.send(result);
+      });
+
+      app.post('/salary', async (req, res) => {
+        const user = req.body;
+        const {email,formattedResult}= req.body;
+
+        const query = { email: user.email }
+        const existingUser = await salaryCollection.findOne(query);
+        if (existingUser) {
+          const result = await salaryCollection.updateOne(
+            { _id: existingUser._id },
+            { $push: { salaryDetails:  formattedResult  } }
+          );
+          res.send(result);
+        }
+        else
+        {
+          const result = await salaryCollection.insertOne({
+            email,
+            salaryDetails: [formattedResult],
+          });
+        res.send(result);
+        }
+        
       });
 
       app.get("/users", async (req, res) => {
