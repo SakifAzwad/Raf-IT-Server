@@ -28,6 +28,7 @@ async function run() {
 
     const userCollection = client.db("raf-IT").collection("users");
     const salaryCollection = client.db("raf-IT").collection("salary");
+    const workCollection = client.db("raf-IT").collection("worksheet");
 
     app.post('/jwt', async (req, res) => {
         const user = req.body;
@@ -92,6 +93,11 @@ async function run() {
         const result = await userCollection.insertOne(user);
         res.send(result);
       });
+      app.post('/worksheet', async (req, res) => {
+        const user = req.body;
+        const result = await workCollection.insertOne(user);
+        res.send(result);
+      });
 
       app.post('/salary', async (req, res) => {
         const user = req.body;
@@ -120,6 +126,17 @@ async function run() {
       app.get("/users", async (req, res) => {
 
         const cursor =userCollection.find();
+        const rest = await cursor.toArray();
+        res.send(rest);
+      });
+      app.get("/worksheet", async (req, res) => {
+
+        const cursor =workCollection.find();
+        const rest = await cursor.toArray();
+        res.send(rest);
+      });
+      app.get("/salary", async (req, res) => {
+        const cursor =salaryCollection.find();
         const rest = await cursor.toArray();
         res.send(rest);
       });
